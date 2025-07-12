@@ -14,7 +14,6 @@ const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key-change-in-producti
 if (JWT_SECRET === "your-secret-key-change-in-production") {
   console.warn("⚠️  WARNING: Using default JWT_SECRET. Change this in production!");
 }
-jkngbefs
 const app    = express();
 const server = http.createServer(app);
 const io     = new Server(server, {
