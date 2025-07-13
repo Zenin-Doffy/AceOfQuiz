@@ -1393,7 +1393,7 @@ async function loadAchievements() {
     let userAchievements = [];
     if (currentUser) {
       const token = localStorage.getItem('authToken');
-      const profileResponse = await fetch('/api/profile', {
+      const profileResponse = await fetch('https://aceofquiz.onrender.com/api/profile', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (profileResponse.ok) {

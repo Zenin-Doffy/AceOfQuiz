@@ -25,6 +25,11 @@
     </div>
   </div>
 
+  <script>
+  const IS_LOCAL = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+  window.API_BASE = IS_LOCAL ? '' : 'https://aceofquiz.onrender.com';
+</script>
+
   <!-- Enhanced Connection Status -->
   <div id="connectionStatus" class="connection-status">
     <div class="status-indicator"></div>
