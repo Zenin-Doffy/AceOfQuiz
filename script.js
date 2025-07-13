@@ -130,12 +130,13 @@ function setupLazyLoading() {
 
 // Enhanced Socket Initialization with better error handling
 function initializeSocket() {
-  socket = io({
+  socket = io('https://aceofquiz.onrender.com', {
     transports: ['websocket', 'polling'],
     timeout: 20000,
     reconnection: true,
     reconnectionAttempts: 5,
     reconnectionDelay: 1000
+  
   });
   
   socket.on('connect', () => {
