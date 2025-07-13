@@ -130,6 +130,11 @@ function setupLazyLoading() {
 
 // Enhanced Socket Initialization with better error handling
 function initializeSocket() {
+  if (typeof io !== 'function') {
+    console.error('Socket.IO client library not loaded');
+    showToast('Couldn’t load Socket.IO – check your CDN link', 'error');
+    return;
+  }
   socket = io('https://aceofquiz.onrender.com', {
     transports: ['websocket', 'polling'],
     timeout: 20000,
