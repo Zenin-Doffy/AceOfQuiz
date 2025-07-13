@@ -53,7 +53,7 @@ async function initializeDatabase() {
     await initializeAchievements();
     await initializeSampleQuestions();
   } catch (err) {
-    console.error("❌ MongoDB connection error:", err);
+    console.error(" MongoDB connection error:", err);
     console.log("📝 Falling back to in-memory sample questions");
     createSampleQuestions();
   }
@@ -709,7 +709,7 @@ io.on("connection", (socket) => {
         sendQuestion(roomId);
       }, 2000);
       
-      console.log(`🎯 Quiz started in room ${roomId} with ${quizId ? 'custom' : 'random'} questions`);
+      console.log(` Quiz started in room ${roomId} with ${quizId ? 'custom' : 'random'} questions`);
     } catch (err) {
       console.error("Start quiz error:", err);
       socket.emit("error", { message: "Failed to start quiz" });
