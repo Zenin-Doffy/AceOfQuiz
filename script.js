@@ -1371,7 +1371,7 @@ async function loadLeaderboard(type) {
       }
     });
     
-    const response = await fetch(`'https://aceofquiz.onrender.com/api/leaderboard'?type=${type}&limit=10`);
+    const response = await fetch(`'https://aceofquiz.onrender.com/api/leaderboard?type=${type}&limit=10'`);
     const data = await response.json();
     const list = document.getElementById('leaderboardList');
     
