@@ -706,7 +706,7 @@ function startSelectedQuiz() {
 // Function to load custom quizzes into the dropdown
 async function loadCustomQuizzes() {
   try {
-    const response = await fetch('/api/user-questions');
+    const response = await fetch('https://aceofquiz.onrender.com/api/user-questions');
     if (response.ok) {
       const quizzes = await response.json();
       const quizSelect = document.getElementById('quizSelect');
@@ -1371,7 +1371,7 @@ async function loadLeaderboard(type) {
       }
     });
     
-    const response = await fetch(`'https://aceofquiz.onrender.com/api/leaderboard?type=${type}&limit=10'`);
+    const response = await fetch(`https://aceofquiz.onrender.com/api/leaderboard?type=${type}&limit=10`);
     const data = await response.json();
     const list = document.getElementById('leaderboardList');
     
