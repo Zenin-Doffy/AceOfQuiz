@@ -135,7 +135,7 @@ function initializeSocket() {
     showToast('Couldn’t load Socket.IO – check your CDN link', 'error');
     return;
   }
-  socket = io({
+  socket = io('https://aceofquiz.onrender.com',{
     transports: ['websocket', 'polling'],
     timeout: 20000,
     reconnection: true,
@@ -1161,7 +1161,7 @@ async function login() {
   }
   
   try {
-    const response = await fetch('/api/login', {
+    const response = await fetch('https://aceofquiz.onrender.com/api/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password })
@@ -1227,7 +1227,7 @@ async function register() {
   }
   
   try {
-    const response = await fetch('/api/register', {
+    const response = await fetch('https://aceofquiz.onrender.com/api/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, email, password })
@@ -1371,7 +1371,7 @@ async function loadLeaderboard(type) {
       }
     });
     
-    const response = await fetch(`/api/leaderboard?type=${type}&limit=10`);
+    const response = await fetch(`'https://aceofquiz.onrender.com/api/leaderboard?type=${type}&limit=10`);
     const data = await response.json();
     const list = document.getElementById('leaderboardList');
     
@@ -1430,7 +1430,7 @@ async function loadLeaderboard(type) {
 // Enhanced Achievements with better visual feedback
 async function loadAchievements() {
   try {
-    const response = await fetch('/api/achievements');
+    const response = await fetch('https://aceofquiz.onrender.com/api/achievements');
     const achievements = await response.json();
     
     let userAchievements = [];
@@ -1771,7 +1771,7 @@ async function saveQuiz() {
       headers['Authorization'] = `Bearer ${token}`;
     }
     
-    const response = await fetch('/api/questions', {
+    const response = await fetch('https://aceofquiz.onrender.com/api/questions', {
       method: 'POST',
       headers: headers,
       body: JSON.stringify({ title, category, difficulty, questions })
