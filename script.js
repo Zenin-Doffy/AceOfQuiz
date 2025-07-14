@@ -135,7 +135,7 @@ function initializeSocket() {
     showToast('Couldn’t load Socket.IO – check your CDN link', 'error');
     return;
   }
-  socket = io('https://aceofquiz.onrender.com', {
+  socket = io({
     transports: ['websocket', 'polling'],
     timeout: 20000,
     reconnection: true,
@@ -638,7 +638,13 @@ function updateRoomActions() {
   
   if (isHost) {
     domCache.roomActions.innerHTML = `
-      <button class="btn btn-primary" onclick="startQuiz()" ${!socket?.connected ? 'disabled' : ''}>
+      <div class="quiz-selection">
+        <label for="quizSelect" class="input-label">Select Quiz Type:</label>
+        <select id="quizSelect" class="input-field">
+          <option value="">Random Questions</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" onclick="startSelectedQuiz()" ${!socket?.connected ? 'disabled' : ''}>
         <i class="fas fa-play"></i>
         Start Quiz
       </button>
@@ -647,6 +653,9 @@ function updateRoomActions() {
         Close Room
       </button>
     `;
+    
+    // Load available custom quizzes
+    loadCustomQuizzes();
   } else {
     domCache.roomActions.innerHTML = `
       <button class="btn btn-warning" onclick="leaveRoom()">
@@ -685,6 +694,35 @@ function startQuiz(quizId = null) {
       startButton.innerHTML = '<i class="fas fa-play"></i> Start Quiz';
     }
   }, 5000);
+}
+
+// New function to start quiz with selected quiz type
+function startSelectedQuiz() {
+  const quizSelect = document.getElementById('quizSelect');
+  const selectedQuizId = quizSelect ? quizSelect.value : null;
+  startQuiz(selectedQuizId || null);
+}
+
+// Function to load custom quizzes into the dropdown
+async function loadCustomQuizzes() {
+  try {
+    const response = await fetch('/api/user-questions');
+    if (response.ok) {
+      const quizzes = await response.json();
+      const quizSelect = document.getElementById('quizSelect');
+      if (quizSelect && quizzes.length > 0) {
+        // Add custom quizzes to dropdown
+        quizzes.forEach(quiz => {
+          const option = document.createElement('option');
+          option.value = quiz._id;
+          option.textContent = `${quiz.title} (${quiz.category} - ${quiz.difficulty})`;
+          quizSelect.appendChild(option);
+        });
+      }
+    }
+  } catch (error) {
+    console.error('Failed to load custom quizzes:', error);
+  }
 }
 
 function showGameStarting(data) {
@@ -1123,7 +1161,7 @@ async function login() {
   }
   
   try {
-    const response = await fetch('https://aceofquiz.onrender.com/api/login', {
+    const response = await fetch('/api/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password })
@@ -1189,7 +1227,7 @@ async function register() {
   }
   
   try {
-    const response = await fetch('https://aceofquiz.onrender.com/api/register', {
+    const response = await fetch('/api/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, email, password })
@@ -1242,7 +1280,7 @@ async function updateUserProfile() {
   
   try {
     const token = localStorage.getItem('authToken');
-    const response = await fetch('https://aceofquiz.onrender.com/api/profile', {
+    const response = await fetch('/api/profile', {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     
@@ -1333,7 +1371,7 @@ async function loadLeaderboard(type) {
       }
     });
     
-    const response = await fetch(`https://aceofquiz.onrender.com/api/leaderboard?type=${type}&limit=10`);
+    const response = await fetch(`/api/leaderboard?type=${type}&limit=10`);
     const data = await response.json();
     const list = document.getElementById('leaderboardList');
     
@@ -1392,13 +1430,13 @@ async function loadLeaderboard(type) {
 // Enhanced Achievements with better visual feedback
 async function loadAchievements() {
   try {
-    const response = await fetch('https://aceofquiz.onrender.com/api/achievements');
+    const response = await fetch('/api/achievements');
     const achievements = await response.json();
     
     let userAchievements = [];
     if (currentUser) {
       const token = localStorage.getItem('authToken');
-      const profileResponse = await fetch('https://aceofquiz.onrender.com/api/profile', {
+      const profileResponse = await fetch('/api/profile', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (profileResponse.ok) {
@@ -1639,12 +1677,6 @@ function updateQuestionNumbers() {
 }
 
 async function saveQuiz() {
-  if (!currentUser) {
-    showToast('Please login to create quizzes', 'error');
-    showTab('auth');
-    return;
-  }
-  
   const title = document.getElementById('quizTitle')?.value.trim();
   const category = document.getElementById('quizCategory')?.value;
   const difficulty = document.getElementById('quizDifficulty')?.value;
@@ -1730,12 +1762,18 @@ async function saveQuiz() {
   
   try {
     const token = localStorage.getItem('authToken');
-    const response = await fetch('https://aceofquiz.onrender.com/api/questions', {
+    const headers = {
+      'Content-Type': 'application/json'
+    };
+    
+    // Only add authorization header if token exists
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    
+    const response = await fetch('/api/questions', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
+      headers: headers,
       body: JSON.stringify({ title, category, difficulty, questions })
     });
     

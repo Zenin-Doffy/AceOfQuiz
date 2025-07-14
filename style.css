@@ -2512,3 +2512,55 @@ overflow-y: auto;     /* allow vertical scrolling when content exceeds 90vh */
   }
 }
 
+
+/* Quiz Selection Styling */
+.quiz-selection {
+  margin-bottom: var(--space-lg);
+  padding: var(--space-md);
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--gray-200);
+}
+
+.quiz-selection .input-label {
+  display: block;
+  margin-bottom: var(--space-sm);
+  font-weight: 600;
+  color: var(--gray-700);
+  font-size: 0.875rem;
+}
+
+.quiz-selection .input-field {
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  background: var(--white);
+  color: var(--gray-800);
+  transition: var(--transition-fast);
+}
+
+.quiz-selection .input-field:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgb(220 38 38 / 0.1);
+}
+
+.quiz-selection .input-field:hover {
+  border-color: var(--gray-300);
+}
+
+/* Responsive quiz selection */
+@media (max-width: 768px) {
+  .quiz-selection {
+    margin-bottom: var(--space-md);
+    padding: var(--space-sm);
+  }
+  
+  .quiz-selection .input-field {
+    font-size: 0.8rem;
+  }
+}
+

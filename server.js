@@ -549,7 +549,7 @@ app.get("/api/achievements", async (req, res) => {
   }
 });
 
-app.post("/api/questions", authenticateToken, async (req, res) => {
+app.post("/api/questions", async (req, res) => {
   try {
     const { title, category, difficulty, questions } = req.body;
     
@@ -568,11 +568,14 @@ app.post("/api/questions", authenticateToken, async (req, res) => {
       return res.status(503).json({ error: "Database not available" });
     }
     
+    // Use "anonymous" as default creator if no user is authenticated
+    const createdBy = req.user ? req.user.userId : "anonymous";
+    
     const quizResult = await UserQuestions.insertOne({
       title,
       category,
       difficulty,
-      createdBy: req.user.userId,
+      createdBy: createdBy,
       createdAt: new Date(),
       questions: questions.map(q => ({
         text: q.text,
@@ -581,7 +584,10 @@ app.post("/api/questions", authenticateToken, async (req, res) => {
       }))
     });
     
-    await checkAndAwardAchievement(req.user.userId, "quiz_creator");
+    // Only award achievement if user is authenticated
+    if (req.user) {
+      await checkAndAwardAchievement(req.user.userId, "quiz_creator");
+    }
     
     res.status(201).json({
       message: "Quiz created successfully",
@@ -619,6 +625,34 @@ app.get("/api/questions", async (req, res) => {
   } catch (err) {
     console.error("Questions fetch error:", err);
     res.status(500).json({ error: "Failed to fetch questions" });
+  }
+});
+
+// New endpoint to get user-created quizzes
+app.get("/api/user-questions", async (req, res) => {
+  try {
+    if (!UserQuestions) {
+      return res.status(503).json({ error: "Database not available" });
+    }
+    
+    const quizzes = await UserQuestions.find({})
+      .sort({ createdAt: -1 })
+      .limit(50)
+      .toArray();
+    
+    const safeQuizzes = quizzes.map(quiz => ({
+      _id: quiz._id,
+      title: quiz.title,
+      category: quiz.category,
+      difficulty: quiz.difficulty,
+      createdAt: quiz.createdAt,
+      questionCount: quiz.questions.length
+    }));
+    
+    res.json(safeQuizzes);
+  } catch (err) {
+    console.error("User questions fetch error:", err);
+    res.status(500).json({ error: "Failed to fetch user questions" });
   }
 });
 
